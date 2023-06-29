@@ -1,15 +1,9 @@
 import click
 import getpass
-import psycopg2
+import sqlite3
 
 def connect_to_database():
-    conn = psycopg2.connect(
-        host="",
-        port=26257,
-        database="defaultdb",
-        user="OpenScan",
-        password="eax8Hk7VQkmtOA3R7yo2mQ"
-    )
+    conn = sqlite3.connect('database.db')
     return conn
 
 @click.group()
@@ -22,18 +16,19 @@ def register():
     password = input("Enter password to register for OpenScan: ")
     conn = connect_to_database()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
+    cursor.execute("CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)")
+    cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
     conn.commit()
     cursor.close()
     conn.close()
 
 @click.command()
 def login():
-    username = input("Enter username to login: ")
-    password = getpass.getpass("Enter password to login: ")
+    username = input("Enter username to login to OpenScan: ")
+    password = getpass.getpass("Enter password to login to OpenScan: ")
     conn = connect_to_database()
     cursor = conn.cursor()
-    cursor.execute("SELECT username, password FROM users WHERE username = %s AND password = %s", (username, password))
+    cursor.execute("SELECT username, password FROM users WHERE username = ? AND password = ?", (username, password))
     result = cursor.fetchone()
     if result:
         print("Login successful!")
