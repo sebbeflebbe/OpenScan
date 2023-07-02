@@ -2,6 +2,7 @@ import click
 import getpass
 import sqlite3
 import os
+from snyk import snyk_logic
 
 def connect_to_database():
     conn = sqlite3.connect('database.db')
@@ -63,11 +64,11 @@ def service():
     pass
 
 @service.command()
-def scanner1():
+def snyk():
     username = input("Enter your username: ")
     status = get_login_status(username)
     if status == 1:
-        click.echo(click.style("Scanner 1 selected", fg="green", bold=True))
+        snyk_logic()
     else:
         click.echo("Please login first.")
 
@@ -109,7 +110,7 @@ def scanner5():
 
 main.add_command(register)
 main.add_command(login)
-main.add_command(service, name="service")  # Add the 'service' command as a subcommand
+main.add_command(service, name="service")
 
 if __name__ == "__main__":
     main()
