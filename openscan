@@ -1,10 +1,28 @@
 import click
 import getpass
 import sqlite3
+import os
 
 def connect_to_database():
     conn = sqlite3.connect('database.db')
     return conn
+
+def update_login_status(username, status):
+    conn = connect_to_database()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET logged_in = ? WHERE username = ?", (status, username))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def get_login_status(username):
+    conn = connect_to_database()
+    cursor = conn.cursor()
+    cursor.execute("SELECT logged_in FROM users WHERE username = ?", (username,))
+    result = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return result[0] if result else None
 
 @click.group()
 def main():
@@ -16,7 +34,7 @@ def register():
     password = input("Enter password to register for OpenScan: ")
     conn = connect_to_database()
     cursor = conn.cursor()
-    cursor.execute("CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT, logged_in INTEGER DEFAULT 0)")
     cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
     conn.commit()
     cursor.close()
@@ -31,14 +49,67 @@ def login():
     cursor.execute("SELECT username, password FROM users WHERE username = ? AND password = ?", (username, password))
     result = cursor.fetchone()
     if result:
-        print("Login successful!")
+        click.echo(click.style("Login successful!", fg="green", bold=True))
+        update_login_status(username, 1)
     else:
-        print("Invalid credentials!")
+        click.echo(click.style("Invalid credentials!", fg="red"))
+        update_login_status(username, 0)
+
     cursor.close()
     conn.close()
 
+@click.group()
+def service():
+    pass
+
+@service.command()
+def scanner1():
+    username = input("Enter your username: ")
+    status = get_login_status(username)
+    if status == 1:
+        click.echo(click.style("Scanner 1 selected", fg="green", bold=True))
+    else:
+        click.echo("Please login first.")
+
+@service.command()
+def scanner2():
+    username = input("Enter your username: ")
+    status = get_login_status(username)
+    if status == 1:
+        click.echo(click.style("Scanner 2 selected", fg="green", bold=True))
+    else:
+        click.echo("Please login first.")
+
+@service.command()
+def scanner3():
+    username = input("Enter your username: ")
+    status = get_login_status(username)
+    if status == 1:
+        click.echo(click.style("Scanner 3 selected", fg="green", bold=True))
+    else:
+        click.echo("Please login first.")
+
+@service.command()
+def scanner4():
+    username = input("Enter your username: ")
+    status = get_login_status(username)
+    if status == 1:
+        click.echo(click.style("Scanner 4 selected", fg="green", bold=True))
+    else:
+        click.echo("Please login first.")
+
+@service.command()
+def scanner5():
+    username = input("Enter your username: ")
+    status = get_login_status(username)
+    if status == 1:
+        click.echo(click.style("Scanner 5 selected", fg="green", bold=True))
+    else:
+        click.echo("Please login first.")
+
 main.add_command(register)
 main.add_command(login)
+main.add_command(service, name="service")  # Add the 'service' command as a subcommand
 
 if __name__ == "__main__":
     main()
