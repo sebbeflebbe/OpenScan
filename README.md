@@ -1,5 +1,9 @@
 # OpenScan
 
+Gives the opportunity to choose different vulnerability services...
+
+Wanna contribute? Please reach out to me!
+
 - "python3 openscan register" to create new user
 - "python openscan login" to login user
 
