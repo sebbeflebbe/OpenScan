@@ -3,6 +3,7 @@ import getpass
 import sqlite3
 import os
 from snyk import snyk_logic
+from bandit import bandit_logic
 
 def connect_to_database():
     conn = sqlite3.connect('database.db')
@@ -72,12 +73,12 @@ def snyk():
     else:
         click.echo("Please login first.")
 
-@service.command()
-def scanner2():
+@service.command(name="bandit")
+def bandit_scan():
     username = input("Enter your username: ")
     status = get_login_status(username)
     if status == 1:
-        click.echo(click.style("Scanner 2 selected", fg="green", bold=True))
+        bandit_logic()
     else:
         click.echo("Please login first.")
 
