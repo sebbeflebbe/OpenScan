@@ -10,4 +10,6 @@ Wanna contribute? Please reach out to me!
 Serveral services to choose from
 
 - "python3 openscan service snyk" to access Snyk scan. Follow CLI instructions.
+- "python3 openscan service bandit" to access Bandit scan. Loads yaml file, feel free to make config changes. 
+
 
